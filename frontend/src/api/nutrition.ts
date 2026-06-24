@@ -23,18 +23,22 @@ export interface MealEntry {
 }
 
 export interface NutritionSummary {
-  calories: number
-  proteinG: number
-  carbsG: number
-  fatG: number
+  date: string
+  totals: {
+    calories: number
+    proteinG: number
+    carbsG: number
+    fatG: number
+  }
+  meals: Record<string, unknown>
 }
 
 export function getNutritionSummary(date: string) {
   return api.get<NutritionSummary>('/api/v1/nutrition/summary', { params: { date } })
 }
 
-export function getMeals() {
-  return api.get<MealEntry[]>('/api/v1/nutrition/meals')
+export function getMeals(date?: string) {
+  return api.get<MealEntry[]>('/api/v1/nutrition/meals', { params: date ? { date } : {} })
 }
 
 export function addMeal(body: {

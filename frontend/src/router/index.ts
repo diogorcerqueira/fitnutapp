@@ -5,6 +5,7 @@ const routes = [
   { path: '/', redirect: '/dashboard' },
   { path: '/login', component: () => import('../pages/LoginPage.vue'), meta: { public: true } },
   { path: '/register', component: () => import('../pages/RegisterPage.vue'), meta: { public: true } },
+  { path: '/oauth-callback', component: () => import('../pages/OAuthCallbackPage.vue'), meta: { public: true } },
   { path: '/dashboard', component: () => import('../pages/DashboardPage.vue') },
   { path: '/profile', component: () => import('../pages/ProfilePage.vue') },
   { path: '/exercises', component: () => import('../pages/ExercisesPage.vue') },
@@ -13,7 +14,8 @@ const routes = [
   { path: '/workouts/log', component: () => import('../pages/WorkoutLogPage.vue') },
   { path: '/workouts/history', component: () => import('../pages/WorkoutHistoryPage.vue') },
   { path: '/nutrition', component: () => import('../pages/NutritionPage.vue') },
-  { path: '/recommendations', component: () => import('../pages/RecommendationsPage.vue') }
+  { path: '/recommendations', component: () => import('../pages/RecommendationsPage.vue') },
+  { path: '/admin', component: () => import('../pages/AdminPage.vue') }
 ]
 
 const router = createRouter({

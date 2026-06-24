@@ -48,13 +48,14 @@ services:
     environment:
       PORT: 3001
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fitness?schema=auth
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
+      JWT_SECRET: 8820ac64cf8de225d46b140cec679e5fae0412666b1587261aa7d31d0389cf604681316a3c29f43eb515cb43259d7125b5c876c2fce5d44213b63dfea9eaf5e2
       JWT_EXPIRES_IN: 15m
       REFRESH_TOKEN_EXPIRES_DAYS: 7
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_CALLBACK_URL: http://localhost:8080/api/v1/auth/google/callback
+      GOOGLE_CALLBACK_URL: http://localhost:8081/api/v1/auth/google/callback
+      FRONTEND_URL: http://localhost:3000
     ports:
       - "3001:3001"
     depends_on:
@@ -69,7 +70,7 @@ services:
     environment:
       PORT: 3002
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fitness?schema=workout
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
+      JWT_SECRET: 8820ac64cf8de225d46b140cec679e5fae0412666b1587261aa7d31d0389cf604681316a3c29f43eb515cb43259d7125b5c876c2fce5d44213b63dfea9eaf5e2
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
       EXERCISEDB_API_KEY: ${EXERCISEDB_API_KEY}
     ports:
@@ -86,9 +87,8 @@ services:
     environment:
       PORT: 3003
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fitness?schema=nutrition
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
+      JWT_SECRET: 8820ac64cf8de225d46b140cec679e5fae0412666b1587261aa7d31d0389cf604681316a3c29f43eb515cb43259d7125b5c876c2fce5d44213b63dfea9eaf5e2
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      AUTH_SERVICE_URL: http://auth-service:3001
     ports:
       - "3003:3003"
     depends_on:
@@ -103,9 +103,9 @@ services:
     environment:
       PORT: 3004
       DATABASE_URL: postgresql://postgres:postgres@postgres:5432/fitness
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
+      JWT_SECRET: 8820ac64cf8de225d46b140cec679e5fae0412666b1587261aa7d31d0389cf604681316a3c29f43eb515cb43259d7125b5c876c2fce5d44213b63dfea9eaf5e2
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
     ports:
       - "3004:3004"
     depends_on:
@@ -115,20 +115,31 @@ services:
         condition: service_healthy
     restart: on-failure
 
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_MAX_MESSAGES: 500
+
   notification-service:
     build: ./notification-service
     environment:
       PORT: 3005
-      JWT_SECRET: ${JWT_SECRET:-supersecretkey}
+      JWT_SECRET: 8820ac64cf8de225d46b140cec679e5fae0412666b1587261aa7d31d0389cf604681316a3c29f43eb515cb43259d7125b5c876c2fce5d44213b63dfea9eaf5e2
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672
-      MAILTRAP_TOKEN: ${MAILTRAP_TOKEN}
-      MAILTRAP_FROM_EMAIL: noreply@fitness-app.com
-      MAILTRAP_FROM_NAME: FitnessApp
+      SMTP_HOST: mailpit
+      SMTP_PORT: 1025
+      SMTP_FROM_EMAIL: noreply@fitness-app.com
+      SMTP_FROM_NAME: FitnessApp
     ports:
       - "3005:3005"
     depends_on:
       rabbitmq:
         condition: service_healthy
+      mailpit:
+        condition: service_started
     restart: on-failure
 
   frontend:

@@ -1,0 +1,93 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["workout"]
+}
+
+model Exercise {
+  id           String  @id @default(uuid())
+  externalId   String  @unique @map("external_id")
+  name         String
+  muscleGroup  String  @map("muscle_group")
+  equipment    String
+  description  String?
+
+  workoutPlanExercises WorkoutPlanExercise[]
+  workoutLogExercises  WorkoutLogExercise[]
+
+  @@map("exercises")
+  @@schema("workout")
+}
+
+model WorkoutPlan {
+  id         String          @id @default(uuid())
+  userId     String          @map("user_id")
+  name       String
+  state      WorkoutPlanState @default(draft)
+  evaluation Json?
+  createdAt  DateTime        @default(now()) @map("created_at")
+  updatedAt  DateTime        @updatedAt @map("updated_at")
+
+  exercises WorkoutPlanExercise[]
+  logs      WorkoutLog[]
+
+  @@map("workout_plans")
+  @@schema("workout")
+}
+
+model WorkoutPlanExercise {
+  id            String  @id @default(uuid())
+  planId        String  @map("plan_id")
+  exerciseId    String  @map("exercise_id")
+  sets          Int
+  reps          Int
+  targetWeightKg Float? @map("target_weight_kg")
+
+  plan     WorkoutPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  exercise Exercise    @relation(fields: [exerciseId], references: [id])
+
+  @@map("workout_plan_exercises")
+  @@schema("workout")
+}
+
+model WorkoutLog {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  planId      String?  @map("plan_id")
+  executedAt  DateTime @map("executed_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  plan      WorkoutPlan?       @relation(fields: [planId], references: [id])
+  exercises WorkoutLogExercise[]
+
+  @@map("workout_logs")
+  @@schema("workout")
+}
+
+model WorkoutLogExercise {
+  id         String @id @default(uuid())
+  logId      String @map("log_id")
+  exerciseId String @map("exercise_id")
+  sets       Int
+  reps       Int
+  weightKg   Float  @map("weight_kg")
+
+  log      WorkoutLog @relation(fields: [logId], references: [id], onDelete: Cascade)
+  exercise Exercise   @relation(fields: [exerciseId], references: [id])
+
+  @@map("workout_log_exercises")
+  @@schema("workout")
+}
+
+enum WorkoutPlanState {
+  draft
+  ready
+  completed
+
+  @@schema("workout")
+}

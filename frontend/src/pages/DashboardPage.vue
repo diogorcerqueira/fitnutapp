@@ -66,10 +66,10 @@ onMounted(async () => {
       <section class="mb-8">
         <h2 class="text-lg font-semibold text-gray-300 mb-3">Macros de Hoje</h2>
         <div v-if="summary" class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <MacroCard label="Calorias" :value="summary.calories" unit="kcal" />
-          <MacroCard label="Proteína" :value="summary.proteinG" unit="g" />
-          <MacroCard label="Hidratos" :value="summary.carbsG" unit="g" />
-          <MacroCard label="Gordura" :value="summary.fatG" unit="g" />
+          <MacroCard label="Calorias" :value="summary.totals.calories" unit="kcal" />
+          <MacroCard label="Proteína" :value="summary.totals.proteinG" unit="g" />
+          <MacroCard label="Hidratos" :value="summary.totals.carbsG" unit="g" />
+          <MacroCard label="Gordura" :value="summary.totals.fatG" unit="g" />
         </div>
         <p v-else class="text-gray-500 text-sm">Sem dados nutricionais para hoje.</p>
       </section>

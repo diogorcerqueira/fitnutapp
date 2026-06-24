@@ -1,0 +1,97 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["auth"]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String?  @map("password_hash")
+  googleId     String?  @unique @map("google_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+  profile       Profile?
+  goals         Goals?
+
+  @@map("users")
+  @@schema("auth")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  tokenHash String   @map("token_hash")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+  @@schema("auth")
+}
+
+model Profile {
+  id            String         @id @default(uuid())
+  userId        String         @unique @map("user_id")
+  weightKg      Float?         @map("weight_kg")
+  heightCm      Float?         @map("height_cm")
+  age           Int?
+  goal          Goal?
+  gender        Gender?
+  activityLevel ActivityLevel? @map("activity_level")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+  @@schema("auth")
+}
+
+model Goals {
+  id               String   @id @default(uuid())
+  userId           String   @unique @map("user_id")
+  targetWeightKg   Float?   @map("target_weight_kg")
+  dailyCaloriesKcal Int?    @map("daily_calories_kcal")
+  dailyProteinG    Int?     @map("daily_protein_g")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("goals")
+  @@schema("auth")
+}
+
+enum Goal {
+  lose_weight
+  maintain_weight
+  gain_muscle
+
+  @@schema("auth")
+}
+
+enum Gender {
+  male
+  female
+
+  @@schema("auth")
+}
+
+enum ActivityLevel {
+  sedentary
+  light
+  moderate
+  active
+  very_active
+
+  @@schema("auth")
+}

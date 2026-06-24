@@ -62,5 +62,10 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.setItem('accessToken', token)
   }
 
-  return { accessToken, refreshToken, user, isAuthenticated, login, register, logout, setTokens, setUser, setAccessToken }
+  function setSession(access: string, refresh: string, u: AuthUser) {
+    setTokens(access, refresh)
+    setUser(u)
+  }
+
+  return { accessToken, refreshToken, user, isAuthenticated, login, register, logout, setTokens, setUser, setAccessToken, setSession }
 })

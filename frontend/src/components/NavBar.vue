@@ -18,7 +18,8 @@ const navLinks = [
   { to: '/workouts/history', label: 'Histórico de Treinos' },
   { to: '/nutrition', label: 'Nutrição' },
   { to: '/recommendations', label: 'Recomendações' },
-  { to: '/profile', label: 'Perfil' }
+  { to: '/profile', label: 'Perfil' },
+  { to: '/admin', label: 'Demo / Admin' }
 ]
 </script>
 

@@ -1,0 +1,79 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["nutrition"]
+}
+
+model Food {
+  id         String   @id @default(uuid())
+  externalId String?  @unique @map("external_id")
+  name       String
+  calories   Float
+  proteinG   Float    @map("protein_g")
+  carbsG     Float    @map("carbs_g")
+  fatG       Float    @map("fat_g")
+  source     FoodSource @default(open_food_facts)
+  cachedAt   DateTime?  @map("cached_at")
+
+  mealEntries MealEntry[]
+
+  @@map("foods")
+  @@schema("nutrition")
+}
+
+model MealEntry {
+  id        String    @id @default(uuid())
+  userId    String    @map("user_id")
+  foodId    String    @map("food_id")
+  mealType  MealType  @map("meal_type")
+  quantityG Float     @map("quantity_g")
+  loggedAt  DateTime  @map("logged_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  food Food @relation(fields: [foodId], references: [id])
+
+  @@map("meal_entries")
+  @@schema("nutrition")
+}
+
+enum MealType {
+  breakfast
+  lunch
+  snack
+  dinner
+
+  @@schema("nutrition")
+}
+
+model GoalNotification {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  goalType   String   @map("goal_type")
+  notifiedAt DateTime @default(now()) @map("notified_at")
+
+  @@map("goal_notifications")
+  @@schema("nutrition")
+}
+
+model UserGoalCache {
+  userId            String   @id @map("user_id")
+  email             String
+  dailyCaloriesKcal Int?     @map("daily_calories_kcal")
+  dailyProteinG     Int?     @map("daily_protein_g")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("user_goal_cache")
+  @@schema("nutrition")
+}
+
+enum FoodSource {
+  open_food_facts
+  manual
+
+  @@schema("nutrition")
+}

@@ -5,6 +5,8 @@ export interface UserProfile {
   heightCm: number | null
   age: number | null
   goal: 'lose_weight' | 'maintain_weight' | 'gain_muscle' | null
+  gender: 'male' | 'female' | null
+  activityLevel: 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active' | null
 }
 
 export interface UserGoals {

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { createLog, searchExercises, type Exercise } from '../api/workouts'
+import { createLog, searchExercises, getPlans, getPlan, type Exercise, type WorkoutPlan } from '../api/workouts'
 
 const router = useRouter()
 
@@ -20,6 +20,42 @@ const rows = ref<LogRow[]>([])
 const submitting = ref(false)
 const error = ref('')
 const success = ref('')
+
+// Import from plan
+const plans = ref<WorkoutPlan[]>([])
+const selectedImportPlanId = ref('')
+const importLoading = ref(false)
+
+async function loadPlans() {
+  try {
+    const res = await getPlans()
+    plans.value = res.data
+  } catch {
+    // silent
+  }
+}
+
+async function importFromPlan() {
+  if (!selectedImportPlanId.value) return
+  importLoading.value = true
+  try {
+    const res = await getPlan(selectedImportPlanId.value)
+    rows.value = res.data.exercises.map(e => ({
+      exerciseId: e.exerciseId,
+      sets: e.sets,
+      reps: e.reps,
+      weightKg: e.targetWeightKg ?? 0,
+      searchQuery: e.exercise.name,
+      results: [],
+      selected: e.exercise,
+    }))
+    selectedImportPlanId.value = ''
+  } catch {
+    error.value = 'Erro ao importar plano.'
+  } finally {
+    importLoading.value = false
+  }
+}
 
 function addRow() {
   rows.value.push({ exerciseId: '', sets: 3, reps: 10, weightKg: 0, searchQuery: '', results: [], selected: null })
@@ -77,7 +113,10 @@ async function handleSubmit() {
   }
 }
 
-onMounted(addRow)
+onMounted(() => {
+  addRow()
+  loadPlans()
+})
 </script>
 
 <template>
@@ -100,6 +139,30 @@ onMounted(addRow)
           type="date"
           class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
         />
+      </div>
+
+      <!-- Import from plan -->
+      <div class="mb-6 bg-gray-700 rounded-lg p-4">
+        <p class="text-sm font-medium text-gray-300 mb-3">Importar de plano existente</p>
+        <div class="flex gap-3">
+          <select
+            v-model="selectedImportPlanId"
+            class="flex-1 bg-gray-600 border border-gray-500 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+          >
+            <option value="" disabled>Seleciona um plano...</option>
+            <option v-for="p in plans" :key="p.id" :value="p.id">
+              {{ p.name }} <span v-if="p.state === 'ready'"> ✓</span>
+            </option>
+          </select>
+          <button
+            :disabled="!selectedImportPlanId || importLoading"
+            class="bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+            @click="importFromPlan"
+          >
+            {{ importLoading ? '...' : 'Importar' }}
+          </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Pré-preenche os exercícios com base no plano. Podes ajustar antes de guardar.</p>
       </div>
 
       <div class="mb-4">
