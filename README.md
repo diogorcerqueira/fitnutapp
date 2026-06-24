@@ -182,13 +182,13 @@ Exchange `fitness.events` (tipo `topic`):
 
 | Documento | Conteúdo |
 |---|---|
-| [`report.md`](report.md) | Decisões de arquitectura, desvios à spec, 23 problemas resolvidos |
-| [`modelo-er.md`](modelo-er.md) | Diagramas ER dos 4 schemas PostgreSQL |
-| [`dicionario-dados.md`](dicionario-dados.md) | Todas as tabelas com tipos, restrições e notas |
-| [`casos-de-uso.md`](casos-de-uso.md) | 15 casos de uso com actor, pré-condições, fluxo principal e alternativos |
-| [`autenticacao-externa.md`](autenticacao-externa.md) | Fluxo Google OAuth 2.0, protecção de rotas, ciclo de vida dos tokens |
-| [`integracao-apis-externas.md`](integracao-apis-externas.md) | Open Food Facts, ExerciseDB, OpenRouter, Mailpit — endpoints, formato, erros |
-| [`Especificação de Requisitos.md`](Especificação%20de%20Requisitos.md) | RF01–RF17, RNF01–RNF07 |
+| [`report.md`](docs/report.md) | Decisões de arquitectura, desvios à spec, 23 problemas resolvidos |
+| [`modelo-er.md`](docs/modelo-er.md) | Diagramas ER dos 4 schemas PostgreSQL |
+| [`dicionario-dados.md`](docs/dicionario-dados.md) | Todas as tabelas com tipos, restrições e notas |
+| [`casos-de-uso.md`](docs/casos-de-uso.md) | 15 casos de uso com actor, pré-condições, fluxo principal e alternativos |
+| [`autenticacao-externa.md`](docs/autenticacao-externa.md) | Fluxo Google OAuth 2.0, protecção de rotas, ciclo de vida dos tokens |
+| [`integracao-apis-externas.md`](docs/integracao-apis-externas.md) | Open Food Facts, ExerciseDB, OpenRouter, Mailpit — endpoints, formato, erros |
+| [`Especificação de Requisitos.md`](docs/Especificação%20de%20Requisitos.md) | RF01–RF17, RNF01–RNF07 |
 
 ---
 
